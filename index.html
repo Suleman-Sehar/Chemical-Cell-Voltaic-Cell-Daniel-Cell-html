@@ -1,0 +1,485 @@
+<!--
+Project: Voltaic Battery — Responsive Animated Educational Page
+File: index.html (responsive + tooltips + narration)
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Voltaic Battery — Animated Explanation</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#ffd166; --muted:#94a3b8; --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02); --card-radius:18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Roboto,'Helvetica Neue',Arial;color:#e6eef6;background:linear-gradient(180deg,var(--bg) 0%, #071126 100%)}
+    
+    .wrap{max-width:1100px;margin:auto;padding:24px}
+    header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;text-align:left}
+    .logo{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#ff8a65);box-shadow:0 6px 20px rgba(255,129,67,0.15);display:grid;place-items:center;font-weight:700;color:#07203b;font-size:22px}
+    h1{font-size:clamp(1.3rem,3vw,2rem)}
+    p.lead{color:var(--muted);margin-top:4px;font-size:clamp(0.9rem,2vw,1rem)}
+
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:22px;margin-top:22px}
+
+    .card{background:linear-gradient(180deg,var(--card), rgba(11,18,32,0.6));border-radius:var(--card-radius);padding:18px;backdrop-filter: blur(6px);box-shadow:0 6px 30px rgba(3,6,14,0.6);}
+    article h2{margin:10px 0 8px;font-size:1.2rem}
+    .section{padding:14px;border-radius:12px;background:linear-gradient(180deg,var(--glass), var(--glass-2));margin-bottom:12px}
+    .eq{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;color:#bfe6ff;overflow-x:auto}
+
+    .stage{position:relative;min-height:520px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+    .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .btn{padding:8px 12px;border-radius:10px;background:#071428;border:1px solid rgba(255,255,255,0.04);color:var(--accent);cursor:pointer;transition:background 0.2s}
+    .btn:hover{background:rgba(255,255,255,0.05)}
+    .btn.secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+
+    .container{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;position:relative}
+    .battery-wrap{position:relative;width:100%;max-width:260px;height:420px}
+
+    /* Cell diagrams */
+    .cell-diagram {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .voltaic-cell, .daniel-cell {
+      position: relative;
+      height: 180px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+    
+    .beaker {
+      position: absolute;
+      bottom: 0;
+      height: 85%;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-bottom: 8px solid rgba(255,255,255,0.1);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    
+    .voltaic-cell .beaker {
+      width: 90%;
+      left: 5%;
+      background: linear-gradient(to top, rgba(168, 213, 226, 0.3), rgba(123, 184, 212, 0.2));
+    }
+    
+    .daniel-cell .left-beaker {
+      width: 45%;
+      left: 0;
+      background: linear-gradient(to top, rgba(168, 213, 226, 0.3), rgba(123, 184, 212, 0.2));
+    }
+    
+    .daniel-cell .right-beaker {
+      width: 45%;
+      right: 0;
+      background: linear-gradient(to top, rgba(212, 181, 176, 0.3), rgba(184, 148, 143, 0.2));
+    }
+    
+    .electrode {
+      position: absolute;
+      width: 16px;
+      height: 70%;
+      bottom: 10%;
+      border-radius: 4px 4px 0 0;
+    }
+    
+    .zinc-electrode {
+      background: linear-gradient(to right, #a8a8a8, #d4d4d4, #a8a8a8);
+      left: 30%;
+    }
+    
+    .copper-electrode {
+      background: linear-gradient(to right, #b87333, #daa520, #b87333);
+      right: 30%;
+    }
+    
+    .salt-bridge {
+      position: absolute;
+      width: 20px;
+      height: 50%;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(to top, #8B4513, #a0522d, #8B4513);
+      border-radius: 0 0 10px 10px;
+      z-index: 10;
+    }
+    
+    .wire {
+      position: absolute;
+      height: 2px;
+      background-color: var(--accent);
+      z-index: 5;
+    }
+    
+    .top-wire {
+      top: 15%;
+      width: 70%;
+      left: 15%;
+    }
+    
+    .ion {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: bold;
+      color: white;
+      animation: float 8s infinite linear;
+    }
+    
+    .zn-ion {
+      background-color: #3498db;
+    }
+    
+    .cu-ion {
+      background-color: #e74c3c;
+    }
+    
+    .so4-ion {
+      background-color: #2ecc71;
+    }
+    
+    .no3-ion {
+      background-color: #9b59b6;
+    }
+    
+    .k-ion {
+      background-color: #f1c40f;
+      color: #2c3e50;
+    }
+    
+    .h-ion {
+      background-color: #e67e22;
+    }
+    
+    .electron {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: #e74c3c;
+      border-radius: 50%;
+      z-index: 20;
+      animation: moveElectron 4s linear infinite;
+    }
+    
+    .bubble {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      animation: floatUp 5s infinite ease-in;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      25% {
+        transform: translate(10px, -10px);
+      }
+      50% {
+        transform: translate(0, -20px);
+      }
+      75% {
+        transform: translate(-10px, -10px);
+      }
+    }
+    
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes moveElectron {
+      0% {
+        transform: translate(0, 0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(200px, 0);
+        opacity: 0;
+      }
+    }
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* Tooltip */
+    .tooltip{position:absolute;background:#111827;padding:8px 10px;border-radius:8px;font-size:13px;max-width:200px;color:#f1f5f9;border:1px solid rgba(255,255,255,0.05);display:none;z-index:20}
+    .tooltip.visible{display:block;animation:fadeIn 0.3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Narration */
+    .narration{margin-top:14px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);color:var(--muted);font-size:0.9rem;line-height:1.5;}
+    .narr-controls{margin-top:8px;display:flex;justify-content:center;gap:10px}
+
+    /* Responsive Design */
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr;}
+      .battery-wrap{max-width:200px;height:340px}
+    }
+
+    @media(max-width:600px){
+      .wrap{padding:12px}
+      header{text-align:center;justify-content:center}
+      h1{font-size:1.3rem}
+      .grid{gap:12px}
+      .controls{justify-content:center}
+      .btn{padding:6px 10px;font-size:0.85rem}
+      .battery-wrap{max-width:160px;height:300px}
+      .narration{font-size:0.85rem}
+      .tooltip{font-size:0.8rem;max-width:160px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">VB</div>
+      <div>
+        <h1>Voltaic Battery — Animated Explanation</h1>
+        <p class="lead">Interactive and responsive visualization of early electricity experiments.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <article>
+          <section class="section"><h2>Electricity before Volta</h2><p>Before chemical cells, electricity was generated by rubbing amber, glass, or metal to produce static charges.</p></section>
+          <section class="section"><h2>Voltaic Cell</h2><p>Alessandro Volta (1745–1827) built the first chemical battery by stacking copper and zinc plates with salt-soaked cardboard between them. Hydrogen gas formed on zinc reduced efficiency, a process called <em>polarization</em>.</p><div class="eq">Zn → Zn²⁺ + 2e⁻</div></section>
+          <section class="section"><h2>Daniell Cell</h2><p>John Daniell (1790–1845) improved Volta’s design by separating the zinc and copper plates in different solutions connected via a salt bridge, reducing polarization and making a stable battery.</p><div class="eq">(+): Zn → Zn²⁺ + 2e⁻<br>(−): Cu²⁺ + 2e⁻ → Cu</div></section>
+        </article>
+      </div>
+
+      <div class="stage card">
+        <div class="controls">
+          <button class="btn" id="playBtn">▶ Play</button>
+          <button class="btn secondary" id="pauseBtn">❚❚ Pause</button>
+          <button class="btn" id="narrPrev">⟨ Prev</button>
+          <button class="btn" id="narrNext">Next ⟩</button>
+          <input id="speed" type="range" min="0.5" max="2.5" step="0.1" value="1" style="width:100px">
+        </div>
+
+        <div class="container">
+          <div class="cell-diagram" id="stage">
+            <!-- Voltaic Cell -->
+            <div class="voltaic-cell" data-tip="Voltaic Cell: Copper and zinc plates in H₂SO₄ electrolyte">
+              <div class="beaker">
+                <div class="electrode zinc-electrode"></div>
+                <div class="electrode copper-electrode"></div>
+                
+                <!-- Ions -->
+                <div class="ion zn-ion" style="top: 60%; left: 25%;">Zn²⁺</div>
+                <div class="ion zn-ion" style="top: 70%; left: 40%;">Zn²⁺</div>
+                <div class="ion h-ion" style="top: 50%; left: 60%;">H⁺</div>
+                <div class="ion h-ion" style="top: 65%; left: 75%;">H⁺</div>
+                <div class="ion so4-ion" style="top: 55%; left: 50%;">SO₄²⁻</div>
+                
+                <!-- Electrons -->
+                <div class="electron" style="top: 25%; left: 32%;"></div>
+                <div class="electron" style="top: 30%; left: 32%; animation-delay: 1s;"></div>
+                
+                <!-- Hydrogen Bubbles -->
+                <div class="bubble" style="left: 70%; bottom: 15%;"></div>
+                <div class="bubble" style="left: 75%; bottom: 10%; animation-delay: 2s;"></div>
+              </div>
+              
+              <!-- Wire -->
+              <div class="wire top-wire"></div>
+            </div>
+            
+            <!-- Daniel Cell -->
+            <div class="daniel-cell" data-tip="Daniel Cell: Separate containers connected by salt bridge">
+              <div class="beaker left-beaker">
+                <div class="electrode zinc-electrode"></div>
+                
+                <!-- Ions -->
+                <div class="ion zn-ion" style="top: 60%; left: 30%;">Zn²⁺</div>
+                <div class="ion zn-ion" style="top: 70%; left: 60%;">Zn²⁺</div>
+                <div class="ion so4-ion" style="top: 50%; left: 40%;">SO₄²⁻</div>
+                <div class="ion so4-ion" style="top: 65%; left: 20%;">SO₄²⁻</div>
+              </div>
+              
+              <div class="beaker right-beaker">
+                <div class="electrode copper-electrode"></div>
+                
+                <!-- Ions -->
+                <div class="ion cu-ion" style="top: 60%; left: 30%;">Cu²⁺</div>
+                <div class="ion cu-ion" style="top: 70%; left: 60%;">Cu²⁺</div>
+                <div class="ion so4-ion" style="top: 50%; left: 40%;">SO₄²⁻</div>
+                <div class="ion so4-ion" style="top: 65%; left: 20%;">SO₄²⁻</div>
+              </div>
+              
+              <!-- Salt Bridge -->
+              <div class="salt-bridge">
+                <!-- Ions in Salt Bridge -->
+                <div class="ion k-ion" style="top: 30%; left: 40%;">K⁺</div>
+                <div class="ion no3-ion" style="top: 60%; left: 40%;">NO₃⁻</div>
+              </div>
+              
+              <!-- Wire -->
+              <div class="wire top-wire"></div>
+              
+              <!-- Electrons -->
+              <div class="electron" style="top: 25%; left: 25%;"></div>
+              <div class="electron" style="top: 30%; left: 25%; animation-delay: 1s;"></div>
+            </div>
+          </div>
+          <div class="tooltip" id="tooltip"></div>
+        </div>
+
+        <div class="narration" id="narrationBox">1️⃣ Electricity before Volta: Rubbing amber, glass, or metal created static electricity — the earliest form of electric generation.</div>
+      </div>
+    </div>
+    <footer>Tap diagrams for tooltips. Resize window to test responsiveness.</footer>
+  </div>
+
+  <script>
+    const stage=document.getElementById('stage');
+    const playBtn=document.getElementById('playBtn');
+    const pauseBtn=document.getElementById('pauseBtn');
+    const speed=document.getElementById('speed');
+    const tooltip=document.getElementById('tooltip');
+    const narrBox=document.getElementById('narrationBox');
+    const narrNext=document.getElementById('narrNext');
+    const narrPrev=document.getElementById('narrPrev');
+
+    let animRunning=false, timers=[],globalSpeed=1,narrStep=0;
+    const narr=[
+      "1️⃣ Electricity before Volta: Rubbing amber or glass produced static electricity.",
+      "2️⃣ Voltaic Cell: Volta stacked Cu/Zn plates with salt-soaked cardboard. Hydrogen gas formed on zinc, reducing efficiency (polarization).",
+      "3️⃣ Voltaic Cell Reactions: Zn → Zn²⁺ + 2e⁻ (oxidation), 2H⁺ + 2e⁻ → H₂ (reduction)",
+      "4️⃣ Daniell Cell: Copper and zinc placed in separate containers linked by a salt bridge. This prevented polarization.",
+      "5️⃣ Daniell Cell Reactions: Zn → Zn²⁺ + 2e⁻ (oxidation), Cu²⁺ + 2e⁻ → Cu (reduction)"
+    ];
+
+    function startAnims(){
+      if(animRunning) return;
+      animRunning=true;
+      
+      // Start all animations
+      const ions = document.querySelectorAll('.ion');
+      const electrons = document.querySelectorAll('.electron');
+      const bubbles = document.querySelectorAll('.bubble');
+      
+      ions.forEach(ion => {
+        ion.style.animationPlayState = 'running';
+      });
+      
+      electrons.forEach(electron => {
+        electron.style.animationPlayState = 'running';
+      });
+      
+      bubbles.forEach(bubble => {
+        bubble.style.animationPlayState = 'running';
+      });
+    }
+
+    function stopAnims(){
+      animRunning=false;
+      
+      // Stop all animations
+      const ions = document.querySelectorAll('.ion');
+      const electrons = document.querySelectorAll('.electron');
+      const bubbles = document.querySelectorAll('.bubble');
+      
+      ions.forEach(ion => {
+        ion.style.animationPlayState = 'paused';
+      });
+      
+      electrons.forEach(electron => {
+        electron.style.animationPlayState = 'paused';
+      });
+      
+      bubbles.forEach(bubble => {
+        bubble.style.animationPlayState = 'paused';
+      });
+    }
+
+    function updateSpeed(){
+      const ions = document.querySelectorAll('.ion');
+      const electrons = document.querySelectorAll('.electron');
+      const bubbles = document.querySelectorAll('.bubble');
+      
+      ions.forEach(ion => {
+        ion.style.animationDuration = `${8/globalSpeed}s`;
+      });
+      
+      electrons.forEach(electron => {
+        electron.style.animationDuration = `${4/globalSpeed}s`;
+      });
+      
+      bubbles.forEach(bubble => {
+        bubble.style.animationDuration = `${5/globalSpeed}s`;
+      });
+    }
+
+    playBtn.onclick=()=>startAnims(); 
+    pauseBtn.onclick=()=>stopAnims();
+    speed.oninput=e=>{
+      globalSpeed=parseFloat(e.target.value);
+      updateSpeed();
+    };
+
+    document.querySelectorAll('.voltaic-cell, .daniel-cell').forEach(el=>{
+      el.addEventListener('click',e=>{
+        const rect=el.getBoundingClientRect();
+        tooltip.textContent=el.dataset.tip;
+        tooltip.classList.add('visible');
+        const above=rect.top>window.innerHeight/2;
+        tooltip.style.top=(window.scrollY+rect.top+(above?-50:rect.height+8))+'px';
+        tooltip.style.left=(window.scrollX+rect.left+rect.width/2-tooltip.offsetWidth/2)+'px';
+        setTimeout(()=>tooltip.classList.remove('visible'),3000);
+      });
+    });
+
+    narrNext.onclick=()=>{narrStep=(narrStep+1)%narr.length;narrBox.textContent=narr[narrStep];};
+    narrPrev.onclick=()=>{narrStep=(narrStep-1+narr.length)%narr.length;narrBox.textContent=narr[narrStep];};
+
+    window.addEventListener('resize',()=>tooltip.classList.remove('visible'));
+    window.addEventListener('load',()=>{
+      // Randomize ion animation delays for more natural movement
+      document.querySelectorAll('.ion').forEach(ion => {
+        const delay = Math.random() * 5;
+        ion.style.animationDelay = `${delay}s`;
+      });
+      
+      startAnims();
+    });
+  </script>
+</body>
+</html>
